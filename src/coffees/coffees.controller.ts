@@ -1,28 +1,34 @@
 import {
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 
-import { CofeesService } from './cofees.service';
-import { CreateCofeeDto } from './dto/create-cofee.dto';
-import { UpdateCofeeDto } from './dto/update-cofee.dto';
+import { CoffeesService } from './coffees.service';
+import { CreateCoffeeDto } from './dto/create-coffee.dto';
+import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { ActiveUser } from '../iam/decorators/active-user.decorator';
 import { ActiveUserData } from '../iam/interfaces/active-user-data.interface';
 import { Role } from '../users/enums/role.enum';
 import { Roles } from '../iam/authorization/decorators/role.decorator';
+import { Permission } from '../iam/authorization/permission.type';
+import { Permissions } from '../iam/authorization/decorators/permissions.decorator';
+import { Auth } from '../iam/authentication/decorators/auth.decorator';
+import { AuthType } from '../iam/authentication/enums/auth-type.enum';
 
-@Controller('cofees')
-export class CofeesController {
-  constructor(private readonly cofeesService: CofeesService) {}
+@Auth(AuthType.Bearer, AuthType.ApiKey)
+@Controller('coffees')
+export class CoffeesController {
+  constructor(private readonly cofeesService: CoffeesService) {}
 
-  @Roles(Role.Admin)
+  //@Roles(Role.Admin)
+  @Permissions(Permission.Create_Coffee)
   @Post()
-  create(@Body() createCofeeDto: CreateCofeeDto) {
+  create(@Body() createCofeeDto: CreateCoffeeDto) {
     return this.cofeesService.create(createCofeeDto);
   }
 
@@ -38,7 +44,7 @@ export class CofeesController {
 
   @Roles(Role.Admin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCofeeDto: UpdateCofeeDto) {
+  update(@Param('id') id: string, @Body() updateCofeeDto: UpdateCoffeeDto) {
     return this.cofeesService.update(+id, updateCofeeDto);
   }
 

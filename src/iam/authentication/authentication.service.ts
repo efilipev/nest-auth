@@ -22,6 +22,7 @@ import {
   InvalidateRefreshTokenError,
   RefreshTokenIdsStorage,
 } from './refresh-token-ids.storage/refresh-token-ids.storage';
+import { OtpAuthenticationService } from './otp-authentication.service';
 
 @Injectable()
 export class AuthenticationService {
@@ -32,6 +33,7 @@ export class AuthenticationService {
     @Inject(JwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+    private readonly otpAuthenticationService: OtpAuthenticationService,
   ) {}
 
   async signUp(signUpDto: SignUpDto) {
@@ -66,6 +68,15 @@ export class AuthenticationService {
 
     if (!isEquals) {
       throw new UnauthorizedException('Password does not match');
+    }
+    if (user.isTfaEnabled) {
+      const isValid = await this.otpAuthenticationService.verify(
+        signInDto.tfaCode,
+        user.tfaSecret,
+      );
+      if (!isValid) {
+        throw new UnauthorizedException();
+      }
     }
 
     return await this.generateTokens(user);

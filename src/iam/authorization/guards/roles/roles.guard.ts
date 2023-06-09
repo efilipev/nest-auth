@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Role } from '../../../../users/enums/role.enum';
 import { REQUEST_USER_KEY } from '../../../iam.constants';
-import { ROLES_KEY } from '../../../authorization/decorators/role.decorator';
+import { ROLES_KEY } from '../../decorators/role.decorator';
 import { ActiveUserData } from '../../../interfaces/active-user-data.interface';
 
 @Injectable()

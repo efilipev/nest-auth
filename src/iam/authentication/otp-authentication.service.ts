@@ -27,10 +27,8 @@ export class OtpAuthenticationService {
   }
 
   async enableTfa(email: string, secret: string): Promise<void> {
-    const { id } = await this.userRepository.findOneByOrFail({
-      where: { email },
-      select: { id: true },
-    });
+    const { id } = await this.userRepository.findOneByOrFail({ email });
+
     await this.userRepository.update(
       { id },
       { tfaSecret: secret, isTfaEnabled: true },
